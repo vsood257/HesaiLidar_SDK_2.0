@@ -225,24 +225,26 @@ int Lidar<T_Point>::Init(const DriverParam& param) {
       LoadCorrectionFile(param.input_param.correction_file_path);
 #else
       {
-        while ((!ptc_client_->IsOpen()) && running_) 
-          std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        if (LoadCorrectionForUdpParser() == -1) {
-          LogWarning("---Failed to obtain correction file from lidar!---");
-          LoadCorrectionFile(param.input_param.correction_file_path);
-        }
+        // while ((!ptc_client_->IsOpen()) && running_) 
+        //   std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        // if (LoadCorrectionForUdpParser() == -1) {
+        LogWarning("Force loading local correction file! %s", param.input_param.correction_file_path.c_str());
+        LoadCorrectionFile(param.input_param.correction_file_path);
+        // }
       }
 #endif
       break;
     case 2:
+      LogWarning("Force loading local correction file! %s", param.input_param.correction_file_path.c_str());
       LoadCorrectionFile(param.input_param.correction_file_path);
       break;
     case 3:
+      LogWarning("Force loading local correction file! %s", param.input_param.correction_file_path.c_str());
       LoadCorrectionFile(param.input_param.correction_file_path);
       break;
     case 4:
       if (LoadCorrectionForSerialParser(param.input_param.correction_save_path) != 0) {
-        LogWarning("---Failed to obtain correction file from lidar!---");
+        LogWarning("Force loading local correction file! %s", param.input_param.correction_file_path.c_str());
         LoadCorrectionFile(param.input_param.correction_file_path);
       }
       break;

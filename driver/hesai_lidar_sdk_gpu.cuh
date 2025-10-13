@@ -137,27 +137,8 @@ public:
     /***************************Init source****************************************/
 
 
-    //load correction file, depanding on source type
-    if (param.input_param.source_type == 1)
-    {
-      u8Array_t sData;
-      for (int i = 0; i < 3; i++)
-      {
-        int ret = lidar_ptr_->ptc_client_->GetCorrectionInfo(sData);
-        if (ret != 0 || gpu_parser_ptr_->LoadCorrectionString((char *)sData.data()) != 0)
-        {
-          gpu_parser_ptr_->LoadCorrectionFile(param.input_param.correction_file_path);
-        }
-        else
-        {
-          break;
-        }
-      }
-    }
-    else
-    {
-      gpu_parser_ptr_->LoadCorrectionFile(param.input_param.correction_file_path);
-    }
+    //Force Load file no matter what type[vsood]
+    gpu_parser_ptr_->LoadCorrectionFile(param.input_param.correction_file_path);
     /********************************************************************************/
     return true;
   }

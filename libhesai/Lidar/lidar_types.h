@@ -44,7 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <atomic>
 #include <array>
 #define CHANNEL_NUM 256
-#define PACKET_NUM 3600
+#define PACKET_NUM 1800
 namespace hesai
 {
 namespace lidar

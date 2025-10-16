@@ -161,9 +161,10 @@ int Lidar<T_Point>::Init(const DriverParam& param) {
     }
     parser_thread_running_ = param.decoder_param.enable_parser_thread;
     udp_thread_running_ = param.decoder_param.enable_udp_thread;
-    if (param.decoder_param.socket_buffer_size > 0) {
-      source_->SetSocketBufferSize(param.decoder_param.socket_buffer_size);
-    }
+    // if (param.decoder_param.socket_buffer_size > 0) {
+    //  source_->SetSocketBufferSize(param.decoder_param.socket_buffer_size);
+    // }
+    source_->SetSocketBufferSize(262144000);
     
     use_timestamp_type_ = param.decoder_param.use_timestamp_type;
     fov_start_ = param.decoder_param.fov_start;

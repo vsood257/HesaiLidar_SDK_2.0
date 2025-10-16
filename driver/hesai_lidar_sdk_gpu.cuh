@@ -202,6 +202,13 @@ public:
         if (imu_cb_) imu_cb_(lidar_ptr_->frame_.imu_config);
       }
 
+      //publish upd packet topic
+      if(pkt_cb_ && (lidar_ptr_->frame_.scan_complete || lidar_ptr_->frame_.half_scan_complete)) {
+            double timestamp = 0;
+            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
+            pkt_cb_(udp_packet_frame, timestamp);
+      }
+
       //one frame is receive completely, split frame
       if (lidar_ptr_->frame_.scan_complete) {
         // If it's not a timeout split frame, it will be one more packet
@@ -216,14 +223,6 @@ public:
           
           //publish point cloud topic
           if(point_cloud_cb_) point_cloud_cb_(lidar_ptr_->frame_);
-
-          //publish upd packet topic
-          if(pkt_cb_) {
-            double timestamp = 0;
-            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
-            pkt_cb_(udp_packet_frame, timestamp);
-          }
-
           if (pkt_loss_cb_ )
           {
             total_packet_count = lidar_ptr_->udp_parser_->GetGeneralParser()->total_packet_count_;

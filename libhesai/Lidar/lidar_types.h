@@ -44,7 +44,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <atomic>
 #include <array>
 #define CHANNEL_NUM 256
-#define PACKET_NUM 1800
+#define PACKET_NUM 3600
 namespace hesai
 {
 namespace lidar
@@ -256,6 +256,7 @@ class LidarDecodedFrame
         laser_num = 0; 
         per_points_num = 0;
         scan_complete = false;
+        half_scan_complete = false;
         distance_unit = 0.0;
         frame_index = 0;
         lidar_state = -1;
@@ -305,6 +306,7 @@ class LidarDecodedFrame
     uint16_t laser_num;
     uint32_t per_points_num; 
     bool scan_complete;
+    bool half_scan_complete;
     double distance_unit;
     int frame_index;
     int16_t lidar_state;

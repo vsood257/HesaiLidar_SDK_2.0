@@ -202,6 +202,13 @@ public:
 
       //do not compute xyzi of points if enable packet_loss_tool_
       // if(packet_loss_tool_ == true) continue;
+  
+      //publish upd packet topic
+      if(pkt_cb_ && (lidar_ptr_->frame_.scan_complete || lidar_ptr_->frame_.half_scan_complete)) {
+            double timestamp = 0;
+            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
+            pkt_cb_(udp_packet_frame, timestamp);
+        }
 
       //one frame is receive completely, split frame
       if(lidar_ptr_->frame_.scan_complete) {
@@ -217,13 +224,6 @@ public:
 
           //publish point cloud topic
           if(point_cloud_cb_) point_cloud_cb_(lidar_ptr_->frame_);
-
-          //publish upd packet topic
-          if(pkt_cb_) {
-            double timestamp = 0;
-            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
-            pkt_cb_(udp_packet_frame, timestamp);
-          }
 
           if (pkt_loss_cb_ )
           {

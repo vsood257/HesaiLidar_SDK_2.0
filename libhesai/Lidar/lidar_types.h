@@ -256,7 +256,7 @@ class LidarDecodedFrame
         laser_num = 0; 
         per_points_num = 0;
         scan_complete = false;
-        num_packet_publish_interval = 1800;
+        num_packet_publish_interval = 900;
         packet_interval_complete = 0;
         last_interval = 0;
         distance_unit = 0.0;

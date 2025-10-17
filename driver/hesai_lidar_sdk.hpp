@@ -202,12 +202,29 @@ public:
 
       //do not compute xyzi of points if enable packet_loss_tool_
       // if(packet_loss_tool_ == true) continue;
-  
-      //publish upd packet topic
-      if(pkt_cb_ && (lidar_ptr_->frame_.scan_complete || lidar_ptr_->frame_.half_scan_complete)) {
+
+        if(pkt_cb_ && lidar_ptr_->frame_.half_scan_complete) {
             double timestamp = 0;
             getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
-            pkt_cb_(udp_packet_frame, timestamp);
+            UdpFrame_t sliced_udp_packet_frame;
+            udp_packet_frame.reserve(1800);
+            for (size_t i = 0; i < 1799; i++) {
+              sliced_udp_packet_frame.emplace_back(udp_packet_frame[i]);
+            }
+            pkt_cb_(sliced_udp_packet_frame, timestamp);
+        }
+
+  
+      //publish upd packet topic
+      if(pkt_cb_ && lidar_ptr_->frame_.scan_complete) {
+            double timestamp = 0;
+            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
+            UdpFrame_t sliced_udp_packet_frame;
+            sliced_udp_packet_frame.reserve(1800);
+            for (size_t i = 1800; i < 3599; i++) {
+              sliced_udp_packet_frame.emplace_back(udp_packet_frame[i]);
+            }
+            pkt_cb_(sliced_udp_packet_frame, timestamp);
         }
 
       //one frame is receive completely, split frame

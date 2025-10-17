@@ -476,6 +476,7 @@ int Udp1_4Parser<T_Point>::DecodePacket(LidarDecodedFrame<T_Point> &frame, const
   frame.return_mode = pTail->GetReturnMode();
   frame.per_points_num = pHeader->GetBlockNum() * pHeader->GetLaserNum();
   frame.scan_complete = false;
+  frame.packet_interval_complete = 0;
   frame.half_scan_complete = false;
   frame.distance_unit = pHeader->GetDistUnit();
   frame.block_num = pHeader->GetBlockNum();
@@ -519,8 +520,9 @@ int Udp1_4Parser<T_Point>::DecodePacket(LidarDecodedFrame<T_Point> &frame, const
         sizeof(HS_LIDAR_BODY_AZIMUTH_ME_V4) +
         unitSize * pHeader->GetLaserNum());
   }
-  if (frame.packet_num == 1800) {
-    frame.half_scan_complete = true;
+  if (frame.packet_num == frame.last_interval + frame.num_packet_publish_interval) {
+    frame.last_interval += frame.num_packet_publish_interval;
+    frame.packet_interval_complete = frame.last_interval;
   }
   if (IsNeedFrameSplit(u16Azimuth)) {
     frame.scan_complete = true;

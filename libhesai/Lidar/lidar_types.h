@@ -256,7 +256,9 @@ class LidarDecodedFrame
         laser_num = 0; 
         per_points_num = 0;
         scan_complete = false;
-        half_scan_complete = false;
+        num_packet_publish_interval = 1200;
+        packet_interval_complete = 0;
+        last_interval = 0;
         distance_unit = 0.0;
         frame_index = 0;
         lidar_state = -1;
@@ -285,6 +287,8 @@ class LidarDecodedFrame
       block_num = 0;
       laser_num = 0; 
       per_points_num = 0;
+      packet_interval_complete = 0;
+      last_interval = 0;
       scan_complete = false;
       distance_unit = 0;
       lidar_state = -1;
@@ -305,6 +309,9 @@ class LidarDecodedFrame
     uint16_t block_num;
     uint16_t laser_num;
     uint32_t per_points_num; 
+    size_t packet_interval_complete;
+    size_t last_interval;
+    size_t num_packet_publish_interval;
     bool scan_complete;
     bool half_scan_complete;
     double distance_unit;

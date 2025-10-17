@@ -202,11 +202,17 @@ public:
         if (imu_cb_) imu_cb_(lidar_ptr_->frame_.imu_config);
       }
 
-      //publish upd packet topic
-      if(pkt_cb_ && (lidar_ptr_->frame_.scan_complete || lidar_ptr_->frame_.half_scan_complete)) {
+      //publish udp packet topic
+      if(pkt_cb_ && lidar_ptr_->frame_.packet_interval_complete != 0) {
             double timestamp = 0;
             getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
-            pkt_cb_(udp_packet_frame, timestamp);
+            UdpFrame_t sliced_udp_packet_frame;
+            sliced_udp_packet_frame.reserve(lidar_ptr_->frame_.num_packet_publish_interval);
+            for (size_t i = lidar_ptr_->frame_.packet_interval_complete - lidar_ptr_->frame_.num_packet_publish_interval; i < lidar_ptr_->frame_.packet_interval_complete; i++) {
+              sliced_udp_packet_frame.emplace_back(udp_packet_frame[i]);
+            }
+            pkt_cb_(sliced_udp_packet_frame, timestamp);
+            lidar_ptr_->frame_.packet_interval_complete = 0;
       }
 
       //one frame is receive completely, split frame

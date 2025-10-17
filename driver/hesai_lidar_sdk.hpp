@@ -203,29 +203,18 @@ public:
       //do not compute xyzi of points if enable packet_loss_tool_
       // if(packet_loss_tool_ == true) continue;
 
-        if(pkt_cb_ && lidar_ptr_->frame_.half_scan_complete) {
+      //publish udp packet topic
+      if(pkt_cb_ && lidar_ptr_->frame_.packet_interval_complete != 0) {
             double timestamp = 0;
             getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
             UdpFrame_t sliced_udp_packet_frame;
-            udp_packet_frame.reserve(1800);
-            for (size_t i = 0; i < 1799; i++) {
+            sliced_udp_packet_frame.reserve(lidar_ptr_->frame_.num_packet_publish_interval);
+            for (size_t i = lidar_ptr_->frame_.packet_interval_complete - lidar_ptr_->frame_.num_packet_publish_interval; i < lidar_ptr_->frame_.packet_interval_complete; i++) {
               sliced_udp_packet_frame.emplace_back(udp_packet_frame[i]);
             }
             pkt_cb_(sliced_udp_packet_frame, timestamp);
-        }
-
-  
-      //publish upd packet topic
-      if(pkt_cb_ && lidar_ptr_->frame_.scan_complete) {
-            double timestamp = 0;
-            getTimestamp(lidar_ptr_->frame_.points[0], timestamp);
-            UdpFrame_t sliced_udp_packet_frame;
-            sliced_udp_packet_frame.reserve(1800);
-            for (size_t i = 1800; i < 3599; i++) {
-              sliced_udp_packet_frame.emplace_back(udp_packet_frame[i]);
-            }
-            pkt_cb_(sliced_udp_packet_frame, timestamp);
-        }
+            lidar_ptr_->frame_.packet_interval_complete = 0;
+      }
 
       //one frame is receive completely, split frame
       if(lidar_ptr_->frame_.scan_complete) {
